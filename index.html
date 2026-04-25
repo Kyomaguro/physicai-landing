@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhysicAI — Capturing the World's Rarest Skills Before They Disappear</title>
+<meta name="description" content="PhysicAI captures expert manipulation data from master craftsmen and turns it into training data for robot foundation models.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --navy: #0a0e27;
+  --dark: #060816;
+  --accent: #3b82f6;
+  --accent-light: #60a5fa;
+  --accent-glow: rgba(59, 130, 246, 0.3);
+  --white: #ffffff;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-900: #0f172a;
+  --font-en: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-jp: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-en);
+  background: var(--dark);
+  color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.jp {
+  font-family: var(--font-jp);
+}
+
+/* ===== NAVIGATION ===== */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+nav.scrolled {
+  background: rgba(6, 8, 22, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  padding: 14px 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--white), var(--accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--gray-400);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--white);
+}
+
+.nav-cta {
+  padding: 8px 22px;
+  background: var(--accent);
+  color: var(--white) !important;
+  border-radius: 8px;
+  font-weight: 600 !important;
+  transition: all 0.3s !important;
+}
+
+.nav-cta:hover {
+  background: var(--accent-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 100%);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.4;
+  animation: pulseGlow 6s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Floating particles */
+.particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--accent-light);
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+  0% { opacity: 0; transform: translateY(100vh) scale(0); }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent-light);
+  margin-bottom: 32px;
+  background: rgba(59, 130, 246, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.hero-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero h1 {
+  font-size: clamp(2.8rem, 6vw, 5.2rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--white) 0%, var(--gray-300) 50%, var(--accent-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle-jp {
+  font-family: var(--font-jp);
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: 400;
+  color: var(--gray-400);
+  margin-bottom: 28px;
+  letter-spacing: 0.1em;
+}
+
+.hero p {
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  color: var(--gray-400);
+  line-height: 1.7;
+  max-width: 640px;
+  margin: 0 auto 44px;
+  font-weight: 300;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  padding: 16px 36px;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--accent-glow);
+  background: var(--accent-light);
+}
+
+.btn-secondary {
+  padding: 16px 36px;
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  border-color: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.05);
+}
+
+/* ===== SCROLLING STATS BAR ===== */
+.stats-bar {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(10, 14, 39, 0.6);
+  backdrop-filter: blur(20px);
+  padding: 48px 24px;
+}
+
+.stats-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  text-align: center;
+}
+
+.stat-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stat-number {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* ===== SECTION STYLING ===== */
+section {
+  padding: 140px 24px;
+  position: relative;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+
+.section-subtitle {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  color: var(--gray-400);
+  line-height: 1.7;
+  max-width: 600px;
+  font-weight: 300;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ===== PROBLEM SECTION ===== */
+.problem {
+  background: var(--dark);
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  margin-top: 80px;
+}
+
+.problem-story {
+  position: relative;
+  padding: 48px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02));
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.problem-story::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #ef4444, transparent);
+}
+
+.problem-story-year {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ef4444;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.problem-story h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.problem-story p {
+  color: var(--gray-400);
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+.problem-story .jp-quote {
+  font-family: var(--font-jp);
+  font-size: 1.1rem;
+  color: var(--gray-300);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-style: italic;
+}
+
+.crisis-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.crisis-stat {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 28px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+
+.crisis-stat:hover {
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.crisis-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.crisis-stat h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.crisis-stat p {
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ===== SOLUTION SECTION ===== */
+.solution {
+  background: var(--navy);
+  overflow: hidden;
+}
+
+.solution-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.solution-header .section-subtitle {
+  margin: 0 auto;
+}
+
+.solution-flow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-bottom: 80px;
+}
+
+.flow-step {
+  position: relative;
+  padding: 40px 32px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.4s;
+}
+
+.flow-step:hover {
+  border-color: var(--accent-glow);
+  background: rgba(59, 130, 246, 0.03);
+  transform: translateY(-4px);
+}
+
+.flow-step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 0 auto 24px;
+}
+
+.flow-step-icon {
+  font-size: 2.4rem;
+  margin-bottom: 20px;
+}
+
+.flow-step h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.flow-step p {
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.flow-step .jp-label {
+  font-family: var(--font-jp);
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  margin-top: 12px;
+}
+
+/* Arrow between steps */
+.flow-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+  transform: translateY(-50%) rotate(45deg);
+  opacity: 0.4;
+}
+
+/* ===== TECHNOLOGY SECTION ===== */
+.technology {
+  background: var(--dark);
+}
+
+.tech-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.tech-header .section-subtitle {
+  margin: 0 auto;
+}
+
+.sensor-stack {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+.sensor-card {
+  position: relative;
+  padding: 36px 28px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sensor-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(59, 130, 246, 0.1);
+}
+
+.sensor-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.sensor-card:hover::before {
+  opacity: 1;
+}
+
+.sensor-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+}
+
+.sensor-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.sensor-card .sensor-model {
+  font-size: 0.78rem;
+  color: var(--accent-light);
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.sensor-card p {
+  color: var(--gray-400);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.data-output {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+}
+
+.data-output h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.data-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.data-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(59, 130, 246, 0.04);
+  border: 1px solid rgba(59, 130, 246, 0.08);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.data-field-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ===== MARKET SECTION ===== */
+.market {
+  background: var(--navy);
+}
+
+.market-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.market-header .section-subtitle {
+  margin: 0 auto;
+}
+
+.timeline {
+  max-width: 800px;
+  margin: 0 auto 80px;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--accent), transparent);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.timeline-item:nth-child(odd) {
+  flex-direction: row;
+  text-align: right;
+  padding-right: calc(50% + 40px);
+}
+
+.timeline-item:nth-child(even) {
+  flex-direction: row-reverse;
+  text-align: left;
+  padding-left: calc(50% + 40px);
+}
+
+.timeline-dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--navy);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.timeline-item h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.timeline-item .year {
+  font-size: 0.78rem;
+  color: var(--accent-light);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.timeline-item p {
+  color: var(--gray-400);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.market-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.comparison-card {
+  padding: 36px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.comparison-card.others {
+  background: rgba(255,255,255,0.02);
+}
+
+.comparison-card.physicai {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.02));
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.comparison-card h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.comparison-card.physicai h4 {
+  color: var(--accent-light);
+}
+
+.comparison-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comparison-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  line-height: 1.5;
+}
+
+.comparison-list li::before {
+  content: '~';
+  color: var(--gray-500);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.comparison-card.physicai .comparison-list li::before {
+  content: '+';
+  color: var(--accent);
+}
+
+/* ===== FOUNDER SECTION ===== */
+.founder {
+  background: var(--dark);
+}
+
+.founder-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.founder-image {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, var(--navy) 0%, rgba(59, 130, 246, 0.1) 50%, var(--navy) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.founder-image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6rem;
+  opacity: 0.15;
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.05), transparent);
+}
+
+.founder-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32px;
+  background: linear-gradient(transparent, rgba(6, 8, 22, 0.9));
+}
+
+.founder-image-overlay h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.founder-image-overlay .jp-name {
+  font-family: var(--font-jp);
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  margin-top: 4px;
+}
+
+.founder-details h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.founder-details h2 span {
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.founder-bio {
+  color: var(--gray-400);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+
+.founder-credentials {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.credential {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.credential:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.credential-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.credential-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.credential-text span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* ===== VISION SECTION ===== */
+.vision {
+  background: var(--navy);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.vision::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 80%, rgba(59, 130, 246, 0.08), transparent);
+}
+
+.vision-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.vision h2 {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, var(--white), var(--accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.vision .jp-vision {
+  font-family: var(--font-jp);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  color: var(--gray-400);
+  margin-bottom: 40px;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.vision p {
+  font-size: 1.1rem;
+  color: var(--gray-400);
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+/* ===== CTA SECTION ===== */
+.cta {
+  background: var(--dark);
+  text-align: center;
+  padding: 160px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.12), transparent 70%);
+  border-radius: 50%;
+}
+
+.cta-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.cta h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.cta p {
+  color: var(--gray-400);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  font-weight: 300;
+}
+
+.cta-form {
+  display: flex;
+  gap: 12px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.cta-form input {
+  flex: 1;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  color: var(--white);
+  font-size: 0.95rem;
+  font-family: var(--font-en);
+  outline: none;
+  transition: all 0.3s;
+}
+
+.cta-form input::placeholder {
+  color: var(--gray-500);
+}
+
+.cta-form input:focus {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.cta-links {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+}
+
+.cta-links a {
+  color: var(--gray-500);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s;
+}
+
+.cta-links a:hover {
+  color: var(--accent-light);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 40px 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-logo {
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, var(--white), var(--accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-text {
+  color: var(--gray-600);
+  font-size: 0.8rem;
+}
+
+.footer-location {
+  color: var(--gray-500);
+  font-size: 0.8rem;
+  font-family: var(--font-jp);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .problem-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .founder-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .founder-image {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    padding: 16px 20px;
+  }
+  .nav-links {
+    display: none;
+  }
+  section {
+    padding: 100px 20px;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .solution-flow {
+    grid-template-columns: 1fr;
+  }
+  .flow-step:not(:last-child)::after {
+    display: none;
+  }
+  .sensor-stack {
+    grid-template-columns: 1fr;
+  }
+  .data-fields {
+    grid-template-columns: 1fr;
+  }
+  .timeline::before {
+    left: 20px;
+  }
+  .timeline-item:nth-child(odd),
+  .timeline-item:nth-child(even) {
+    flex-direction: row;
+    text-align: left;
+    padding-right: 0;
+    padding-left: 56px;
+  }
+  .timeline-dot {
+    left: 20px;
+  }
+  .market-comparison {
+    grid-template-columns: 1fr;
+  }
+  .cta-form {
+    flex-direction: column;
+  }
+  .footer-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="nav">
+  <div class="nav-logo">PhysicAI</div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#technology">Technology</a></li>
+    <li><a href="#market">Market</a></li>
+    <li><a href="#founder">Founder</a></li>
+    <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Y Combinator S26 Applicant</div>
+    <h1>The World's Skills<br>Are Disappearing.<br>We're Saving Them.</h1>
+    <p class="hero-subtitle-jp jp">匠の技を、ロボットの知能に変える</p>
+    <p>PhysicAI captures expert manipulation data from master craftsmen and transforms it into training data for the next generation of robot foundation models.</p>
+    <div class="hero-buttons">
+      <a href="#contact" class="btn-primary">Join the Waitlist <span style="font-size:1.2em">&#8594;</span></a>
+      <a href="#solution" class="btn-secondary">See How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">80,000+</div>
+      <div class="stat-label">Skilled workers retiring per year in Japan</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">52%</div>
+      <div class="stat-label">of SMEs have no successor</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">$50B+</div>
+      <div class="stat-label">Physical AI market by 2030</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">0</div>
+      <div class="stat-label">Companies collecting expert-grade skill data</div>
+    </div>
+  </div>
+</div>
+
+<!-- Problem Section -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">The Crisis</div>
+      <div class="section-title">The Skills That Built<br>Modern Industry Are<br>Vanishing Forever</div>
+      <p class="section-subtitle">Every week, irreplaceable manufacturing expertise disappears as master craftsmen retire with no successors.</p>
+    </div>
+
+    <div class="problem-grid">
+      <div class="problem-story reveal reveal-delay-1">
+        <div class="problem-story-year">2018 &mdash; TOKYO, JAPAN</div>
+        <h3>The Painless Needle<br>That Died With Its Maker</h3>
+        <p>Okano Industries invented the world's thinnest needle &mdash; painless injection technology that could have changed medicine globally. The company was profitable. The product was loved. But when the founder retired, the business shut down.</p>
+        <p style="margin-top:12px">The reason? The micro-precision welding technique that made the needle possible lived entirely in one man's hands. No documentation. No data. No successor.</p>
+        <div class="jp-quote">「技術は人の手の中にあった。記録されることなく、消えた。」</div>
+      </div>
+
+      <div class="crisis-stats">
+        <div class="crisis-stat reveal reveal-delay-1">
+          <div class="crisis-icon">&#9888;</div>
+          <div>
+            <h4>80,000 experts retire annually</h4>
+            <p>Japan's manufacturing backbone is hollowing out. Each retiree takes decades of accumulated tacit knowledge.</p>
+          </div>
+        </div>
+        <div class="crisis-stat reveal reveal-delay-2">
+          <div class="crisis-icon">&#128683;</div>
+          <div>
+            <h4>52% of SMEs have no successor</h4>
+            <p>More than half of Japan's small manufacturers cannot find anyone to inherit their specialized skills.</p>
+          </div>
+        </div>
+        <div class="crisis-stat reveal reveal-delay-3">
+          <div class="crisis-icon">&#127759;</div>
+          <div>
+            <h4>A global problem hiding in plain sight</h4>
+            <p>Japan is the canary in the coal mine. Germany, Korea, and the US face the same crisis within 10 years.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Solution Section -->
+<section class="solution" id="solution">
+  <div class="container">
+    <div class="solution-header reveal">
+      <div class="section-label">The Solution</div>
+      <div class="section-title">Capture. Digitize. Immortalize.</div>
+      <p class="section-subtitle">We deploy multi-modal sensor rigs to master craftsmen's workstations, capturing every nuance of their expert technique in high-fidelity data.</p>
+    </div>
+
+    <div class="solution-flow">
+      <div class="flow-step reveal reveal-delay-1">
+        <div class="flow-step-number">1</div>
+        <div class="flow-step-icon">&#128247;</div>
+        <h3>Capture</h3>
+        <p>Deploy sensor rigs to craftsmen's workstations. Record depth video, hand motion, force feedback, and tool dynamics in perfect synchronization.</p>
+        <div class="jp-label jp">技術の記録</div>
+      </div>
+      <div class="flow-step reveal reveal-delay-2">
+        <div class="flow-step-number">2</div>
+        <div class="flow-step-icon">&#9881;</div>
+        <h3>Process</h3>
+        <p>Transform raw sensor data into structured, annotated datasets compatible with robot learning frameworks. Expert-verified quality at every step.</p>
+        <div class="jp-label jp">データの構造化</div>
+      </div>
+      <div class="flow-step reveal reveal-delay-3">
+        <div class="flow-step-number">3</div>
+        <div class="flow-step-icon">&#129302;</div>
+        <h3>Deploy</h3>
+        <p>License expert skill datasets to robotics companies building foundation models. Skills become immortal, craftsmen earn royalties.</p>
+        <div class="jp-label jp">技術の不死化</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Technology Section -->
+<section class="technology" id="technology">
+  <div class="container">
+    <div class="tech-header reveal">
+      <div class="section-label">Technology</div>
+      <div class="section-title">Multi-Modal Sensor Stack</div>
+      <p class="section-subtitle">Purpose-built for capturing the subtleties of expert manipulation that off-the-shelf motion capture misses entirely.</p>
+    </div>
+
+    <div class="sensor-stack">
+      <div class="sensor-card reveal reveal-delay-1">
+        <div class="sensor-icon-wrap">&#128248;</div>
+        <h3>Depth Vision</h3>
+        <div class="sensor-model">Orbbec Gemini 335</div>
+        <p>Stereo depth camera with structured light. Captures 3D point clouds of the workspace, tool positions, and workpiece geometry at 30fps.</p>
+      </div>
+      <div class="sensor-card reveal reveal-delay-2">
+        <div class="sensor-icon-wrap">&#9995;</div>
+        <h3>Hand Tracking</h3>
+        <div class="sensor-model">Rokoko Smartgloves</div>
+        <p>Full finger articulation tracking with sub-millimeter precision. Captures the micro-movements that differentiate an expert from a novice.</p>
+      </div>
+      <div class="sensor-card reveal reveal-delay-3">
+        <div class="sensor-icon-wrap">&#128170;</div>
+        <h3>Force Sensing</h3>
+        <div class="sensor-model">Custom Force Arrays</div>
+        <p>Measures grip pressure, tool-to-surface contact force, and dynamic torque. The missing dimension in all existing manipulation datasets.</p>
+      </div>
+    </div>
+
+    <div class="data-output reveal">
+      <h3>Structured Data Output Per Session</h3>
+      <div class="data-fields">
+        <div class="data-field"><span class="data-field-dot"></span> 6-DOF hand trajectory</div>
+        <div class="data-field"><span class="data-field-dot"></span> 22-joint finger poses</div>
+        <div class="data-field"><span class="data-field-dot"></span> RGB-D point clouds</div>
+        <div class="data-field"><span class="data-field-dot"></span> Contact force vectors</div>
+        <div class="data-field"><span class="data-field-dot"></span> Tool state telemetry</div>
+        <div class="data-field"><span class="data-field-dot"></span> Expert annotations</div>
+        <div class="data-field"><span class="data-field-dot"></span> Temporal segmentation</div>
+        <div class="data-field"><span class="data-field-dot"></span> Skill taxonomy labels</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Market Section -->
+<section class="market" id="market">
+  <div class="container">
+    <div class="market-header reveal">
+      <div class="section-label">Market Opportunity</div>
+      <div class="section-title">Physical AI Is Where<br>Language AI Was in 2020</div>
+      <p class="section-subtitle">The algorithms exist. The hardware is ready. The only bottleneck is data &mdash; exactly the gap PhysicAI fills.</p>
+    </div>
+
+    <div class="timeline reveal">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="year">2020</div>
+          <h4>GPT-3 Proves Scale</h4>
+          <p>Language AI shows that data quantity + quality = breakthrough capability.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="year">2022</div>
+          <h4>Scale AI Valued at $7B</h4>
+          <p>Data labeling for language/vision AI becomes a massive market. The "data layer" wins.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="year">2024</div>
+          <h4>pi0, RT-2, Optimus</h4>
+          <p>Robot foundation models emerge. But they're starving for high-quality manipulation data.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="year">2026</div>
+          <h4>PhysicAI Enters</h4>
+          <p>Expert-grade skill data becomes the decisive competitive advantage in physical AI.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="market-comparison">
+      <div class="comparison-card others reveal reveal-delay-1">
+        <h4>Existing Data Companies</h4>
+        <ul class="comparison-list">
+          <li>Pick-and-place in lab environments</li>
+          <li>Coarse teleoperation data</li>
+          <li>Simple object manipulation</li>
+          <li>Non-expert crowd-sourced collection</li>
+          <li>Synthetic / simulated data</li>
+        </ul>
+      </div>
+      <div class="comparison-card physicai reveal reveal-delay-2">
+        <h4>PhysicAI</h4>
+        <ul class="comparison-list">
+          <li>Expert-grade welding, polishing, assembly</li>
+          <li>Multi-modal: vision + hands + force</li>
+          <li>Real-world factory environments</li>
+          <li>Master craftsman demonstrations</li>
+          <li>Annotated with tacit knowledge</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Founder Section -->
+<section class="founder" id="founder">
+  <div class="container">
+    <div class="founder-grid">
+      <div class="founder-image reveal">
+        <div class="founder-image-placeholder">KT</div>
+        <div class="founder-image-overlay">
+          <h3>Kyohei Tsuchida</h3>
+          <div class="jp-name jp">土田 恭平</div>
+        </div>
+      </div>
+
+      <div class="founder-details reveal reveal-delay-1">
+        <div class="section-label">Founder</div>
+        <h2>Built a company to <span>$530K revenue</span> at age 24</h2>
+        <p class="founder-bio">Kyohei Tsuchida is a founder obsessed with the intersection of physical craftsmanship and artificial intelligence. Based in Tokyo, he has spent years studying why the world's most valuable manufacturing skills are locked inside individual humans &mdash; and how to set them free.</p>
+
+        <div class="founder-credentials">
+          <div class="credential">
+            <div class="credential-icon">&#127891;</div>
+            <div class="credential-text">
+              Keio University
+              <span>Japan's leading private university</span>
+            </div>
+          </div>
+          <div class="credential">
+            <div class="credential-icon">&#128200;</div>
+            <div class="credential-text">
+              Percify &mdash; $530K Revenue
+              <span>Previous startup, built and scaled as solo founder</span>
+            </div>
+          </div>
+          <div class="credential">
+            <div class="credential-icon">&#127471;&#127477;</div>
+            <div class="credential-text">
+              Deep Japan Manufacturing Network
+              <span>Direct relationships with SME factory owners</span>
+            </div>
+          </div>
+          <div class="credential">
+            <div class="credential-icon">&#129302;</div>
+            <div class="credential-text">
+              Physical AI Domain Expert
+              <span>NEDO grant track for robotics data platforms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Vision Section -->
+<section class="vision" id="vision">
+  <div class="vision-content reveal">
+    <div class="section-label">The Vision</div>
+    <h2>A Future Where No Skill Is Ever Lost Again</h2>
+    <p class="jp-vision jp">「どんな技術も、もう二度と失われない未来へ」</p>
+    <p>Imagine a world where a master welder in Osaka can teach a robot in Detroit. Where a retiring craftsman's 40 years of intuition become an immortal dataset. Where the next generation of robots doesn't just move &mdash; they move with expertise.</p>
+    <p style="margin-top:20px">PhysicAI is building that future. We are the data layer for physical intelligence.</p>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta" id="contact">
+  <div class="cta-content reveal">
+    <h2>Let's Build the Future<br>of Physical AI</h2>
+    <p>Whether you're a robotics company hungry for data, a manufacturer with skills to preserve, or an investor who sees what's coming &mdash; we want to talk.</p>
+    <div class="cta-form">
+      <input type="email" placeholder="your@email.com" id="email-input">
+      <button class="btn-primary" onclick="handleSubmit()">Get in Touch</button>
+    </div>
+    <div class="cta-links">
+      <a href="mailto:hello@physicai.com">hello@physicai.com</a>
+      <a href="#">Twitter / X</a>
+      <a href="#">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-logo">PhysicAI</div>
+    <div class="footer-text">&copy; 2026 PhysicAI Inc. All rights reserved.</div>
+    <div class="footer-location jp">東京, 日本 &mdash; Tokyo, Japan</div>
+  </div>
+</footer>
+
+<script>
+// ===== PARTICLE ANIMATION =====
+(function() {
+  const container = document.getElementById('particles');
+  const count = 40;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    container.appendChild(p);
+  }
+})();
+
+// ===== NAVBAR SCROLL =====
+const nav = document.getElementById('nav');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  nav.classList.toggle('scrolled', y > 60);
+  lastScroll = y;
+}, { passive: true });
+
+// ===== INTERSECTION OBSERVER FOR REVEAL ANIMATIONS =====
+const observerOptions = {
+  threshold: 0.15,
+  rootMargin: '0px 0px -40px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.reveal, .stat-item').forEach(el => {
+  observer.observe(el);
+});
+
+// ===== SMOOTH SCROLL =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ===== CTA FORM HANDLER =====
+function handleSubmit() {
+  const input = document.getElementById('email-input');
+  const email = input.value.trim();
+  if (email && email.includes('@')) {
+    input.value = '';
+    input.placeholder = 'Thank you! We\'ll be in touch.';
+    input.style.borderColor = '#22c55e';
+    setTimeout(() => {
+      input.placeholder = 'your@email.com';
+      input.style.borderColor = '';
+    }, 3000);
+  } else {
+    input.style.borderColor = '#ef4444';
+    input.placeholder = 'Please enter a valid email';
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.placeholder = 'your@email.com';
+    }, 2000);
+  }
+}
+
+// Enter key for email
+document.getElementById('email-input').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') handleSubmit();
+});
+
+// ===== COUNTER ANIMATION FOR STATS =====
+function animateCounter(el) {
+  const text = el.textContent;
+  const hasPlus = text.includes('+');
+  const hasPercent = text.includes('%');
+  const hasDollar = text.includes('$');
+  const hasB = text.includes('B');
+
+  let num = parseFloat(text.replace(/[^0-9.]/g, ''));
+  if (isNaN(num) || num === 0) return;
+
+  const duration = 1800;
+  const start = performance.now();
+  const isDecimal = num % 1 !== 0;
+
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 4);
+    let current = num * eased;
+
+    let display = '';
+    if (hasDollar) display += '$';
+    if (isDecimal) {
+      display += current.toFixed(0);
+    } else {
+      display += Math.floor(current).toLocaleString();
+    }
+    if (hasB) display += 'B';
+    if (hasPlus) display += '+';
+    if (hasPercent) display += '%';
+    el.textContent = display;
+
+    if (progress < 1) requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
+}
+
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounter(entry.target);
+      statObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-number').forEach(el => {
+  statObserver.observe(el);
+});
+</script>
+
+</body>
+</html>
